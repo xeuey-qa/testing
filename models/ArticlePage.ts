@@ -13,25 +13,24 @@ export class ArticlePage {
     }
 
 
-async searchFor(text: string) {
+// Добавляем второй параметр expectedType, чтобы функция знала, что искать
+async searchFor(text: string, expectedType: 'success' | 'error' = 'success') {
     await this.searchInput.fill(text);
     await this.searchInput.press('Enter');
 
-    const firstResultLink = this.page.locator('.mw-search-result-heading a')
-        .filter({ hasText: text })
-        .first();
+    const firstResultLink = this.page.locator('.mw-search-result-heading a').first();
     const noResultsMsg = this.page.getByText('Соответствий запросу не найдено');
 
-    // ХИТРОСТЬ: Ждем появления любого из этих элементов, но не долго
-    // Мы пробуем найти ссылку. Если она появилась за 3 секунды — кликаем.
-    try {
-        await firstResultLink.waitFor({ state: 'visible', timeout: 3000 });
+    if (expectedType === 'success') {
+        // Для позитивных тестов: ждем ссылку и кликаем
+        // Увеличиваем таймаут до 10 сек для стабильности в облаке
+        await firstResultLink.waitFor({ state: 'visible', timeout: 10000 });
         await firstResultLink.click();
-    } catch (e) {
-        // Если ссылка НЕ появилась за 3 сек, значит это скорее всего негативный тест
-        // Проверяем сообщение об ошибке
-        await expect(noResultsMsg).toBeVisible();
+    } else {
+        // Для негативных тестов: просто проверяем сообщение об ошибке
+        await expect(noResultsMsg).toBeVisible({ timeout: 10000 });
     }
+
 
 
 

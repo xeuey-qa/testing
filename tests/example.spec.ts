@@ -20,13 +20,6 @@ test.describe('ГРУППА ТЕСТОВ 1: ПОИСК СТАТЕЙ', () => {
 
 // --- ТЕСТ 2: НЕГАТИВНЫЙ СЦЕНАРИЙ (Другая логика) ---
 test('Проверка поиска несуществующей статьи', async ({ articlePage, page }) => {
-    await articlePage.open();
-    await articlePage.searchFor('Asdfghjkl123456'); // Заведомая абракадабра
-    
-    // Тут мы проверяем, что появился текст о том, что ничего не найдено
-    const noResultsMessage = page.getByText('Соответствий запросу не найдено');
-    await test.step('Проверяем сообщение об отсутствии результатов', async () => {
-    // Используем expect, чтобы тест реально ЖДАЛ и ПРОВЕРЯЛ
-    await expect(noResultsMessage).toBeVisible();
-});
+   // Мы говорим функции: "Жди ошибку, а не ссылку!"
+await articlePage.searchFor('Asdfghjkl123456', 'error');
 });
