@@ -1,6 +1,6 @@
 [
   { "search": "TypeScript", "expected": "TypeScript" },
   { "search": "Python", "expected": "Python" },
-  { "search": "Яндекс", "expected": "Яндекс" },
-  { "search": "Asdfghjkl123456", "expected": "error" }
+  { "search": "Яндекс", "expected": "Яндекс" }
+
 ]

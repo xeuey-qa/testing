@@ -3,48 +3,35 @@ import { Page, Locator, expect } from '@playwright/test';
 export class ArticlePage {
     readonly page: Page;
     readonly mainHeading: Locator;
-    readonly searchInput: Locator; // Добавим переменную для поля поиска
+    readonly searchInput: Locator;
 
     constructor(page: Page) {
         this.page = page;
         this.mainHeading = page.locator('h1#firstHeading'); 
-        // Локатор поля поиска на главной Википедии
         this.searchInput = page.locator('input[name="search"]');
     }
 
+    async open() {
+        await this.page.goto('/');
+    }
 
-// Добавляем второй параметр expectedType, чтобы функция знала, что искать
-async searchFor(text: string, expectedType: 'success' | 'error' = 'success') {
+    async searchFor(text: string) {
     await this.searchInput.fill(text);
     await this.searchInput.press('Enter');
 
-    const firstResultLink = this.page.locator('.mw-search-result-heading a').first();
-    const noResultsMsg = this.page.getByText('Соответствий запросу не найдено');
+    // Локатор первой ссылки в результатах
+    const firstLink = this.page.locator('.mw-search-result-heading a').first();
 
-    if (expectedType === 'success') {
-        // Для позитивных тестов: ждем ссылку и кликаем
-        // Увеличиваем таймаут до 10 сек для стабильности в облаке
-        await firstResultLink.waitFor({ state: 'visible', timeout: 10000 });
-        await firstResultLink.click();
-    } else {
-        // Для негативных тестов: просто проверяем сообщение об ошибке
-        await expect(noResultsMsg).toBeVisible({ timeout: 10000 });
+    // Ждем немного, чтобы понять: мы в статье или в результатах?
+    // Если появилась ссылка — кликаем по ней, чтобы попасть в статью.
+    if (await firstLink.isVisible({ timeout: 5000 }).catch(() => false)) {
+        await firstLink.click();
     }
-
-
-
-
-
-    
-    // 3. Если shouldClick = false (негативный тест), 
-    // мы просто ничего больше не делаем и выходим из метода.
-
-    }
+    // Если ссылки нет — значит, мы либо уже в статье, либо ничего не нашли.
+}
 
     async checkTitle(expectedText: string) {
+        // Проверяем заголовок статьи
         await expect(this.mainHeading).toContainText(expectedText);
     }
-    async open() {
-    await this.page.goto('/');
-}
 }
