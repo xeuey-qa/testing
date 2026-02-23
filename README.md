@@ -51,9 +51,3 @@ npx playwright show-report
 * `tests/searchData.json` — файл с данными для поиска и ожидаемыми результатами.
 
 ---
-
-### Как это добавить в проект:
-
-1. Создай файл в корне проекта с названием `README.md`.
-2. Вставь туда этот текст.
-3. Сохрани, сделай `git add README.md`, `git commit -m "docs: добавлен README"` и `git push`.
